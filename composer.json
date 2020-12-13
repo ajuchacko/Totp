@@ -1,0 +1,13 @@
+{
+    "name": "atom/totp",
+    "require-dev": {
+        "spomky-labs/otphp": "^10.0"
+    },
+    "authors": [
+        {
+            "name": "aju",
+            "email": "aju@cubettech.com"
+        }
+    ],
+    "require": {}
+}
