@@ -61,4 +61,11 @@ class TotpTest extends TestCase {
         $this->assertNotEquals($code, $otp->code());
         $this->assertTrue($otp->verify($otp->code()));
     }
+
+    function testOtpDurationCanBeGivenAsHumanReadableString()
+    {
+        $otp = Totp::make('15 minutes');
+
+        $this->assertEquals(Carbon::now()->addMinutes(15)->micro(0), $otp->validUntil());
+    }
 }

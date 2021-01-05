@@ -10,22 +10,11 @@ class Totp {
 
     function __construct($duration = 600, $size = 4)
     {
-        $this->duration = $duration;
+        $this->duration = $this->parseDuration($duration);
 
         $this->size = $size;
 
-        $this->otp = $this->generate($duration, $size);
-    }
-
-    private function generate($period, $digits)
-    {
-        $totp = OTP::create(null, $period, $digest = 'sha1', $digits, $epoch = time());
-        $totp->setLabel(Str::random(10));
-
-        $this->code = $totp->now();
-        $this->uri = $totp->getProvisioningUri();
-
-        return $totp;
+        $this->otp = $this->generate($this->duration, $size);
     }
 
     public static function make($duration = 600, $size = 4)
@@ -63,5 +52,27 @@ class Totp {
     public function refresh()
     {
         return $this->otp = $this->generate($this->duration, $this->size);
+    }
+
+    private function generate($period, $digits)
+    {
+        $totp = OTP::create(null, $period, $digest = 'sha1', $digits, $epoch = time());
+        $totp->setLabel(Str::random(10));
+        // $totp->setIssuer(app_name);
+
+        $this->code = $totp->now();
+        $this->uri = $totp->getProvisioningUri();
+
+        return $totp;
+    }
+
+    private function parseDuration($duration)
+    {
+        if (is_string($duration) && $timestamp = strtotime($duration)) {
+            $expiry_time = Carbon::parse($timestamp);
+            return Carbon::now()->diffInSeconds($expiry_time) + 1;
+        }
+
+        return $duration;
     }
 }
