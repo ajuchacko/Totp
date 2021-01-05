@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2021 Aju chacko
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+
 namespace Ajuchacko\Totp;
 
 use Carbon\Carbon;
@@ -10,9 +19,9 @@ class Totp {
 
     function __construct($duration = 600, $size = 4)
     {
-        $this->duration = $this->parseDuration($duration);
-
         $this->size = $size;
+
+        $this->duration = $this->parseDuration($duration);
 
         $this->otp = $this->generate($this->duration, $size);
     }
@@ -57,8 +66,8 @@ class Totp {
     private function generate($period, $digits)
     {
         $totp = OTP::create(null, $period, $digest = 'sha1', $digits, $epoch = time());
-        $totp->setLabel(Str::random(10));
-        // $totp->setIssuer(app_name);
+        empty(config('app.name')) ?: $totp->setIssuer(config('app.name'));
+        $totp->setLabel(Str::random(15));
 
         $this->code = $totp->now();
         $this->uri = $totp->getProvisioningUri();
