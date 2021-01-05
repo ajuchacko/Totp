@@ -1,13 +1,47 @@
 {
-    "name": "atom/totp",
-    "require-dev": {
-        "spomky-labs/otphp": "^10.0"
-    },
+    "name": "ajuchacko/totp",
+    "description": "A simple library to make 2fa codes(Otp) to send via sms for laravel apps.",
+    "keywords": [
+        "ajuchacko",
+        "otp",
+        "time based otp",
+        "laravel"
+    ],
     "authors": [
         {
             "name": "aju",
-            "email": "aju@cubettech.com"
+            "email": "ajuchacko91@gmail.com",
+            "homepage": "https://github.com/ajuchacko91",
+            "role": "Developer"
         }
     ],
-    "require": {}
+    "require": {
+        "spomky-labs/otphp": "^10.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^5.11"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ajuchacko\\Totp\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ajuchacko\\Totp\\Tests\\": "tests"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ajuchacko\\Totp\\TotpServiceProvider"
+            ],
+            "aliases": {
+                "Totp": "Ajuchacko\\Totp\\Facades\\Totp"
+            }
+        }
+    }
 }
