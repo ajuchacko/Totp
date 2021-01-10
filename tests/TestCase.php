@@ -14,11 +14,11 @@ abstract class TestCase extends Orchestra
     {
         parent::setUp();
 
-        // $this->loadLaravelMigrations(['--database' => 'sqlite']);
+        $this->loadLaravelMigrations(['--database' => 'sqlite']);
 
-        // $this->setUpDatabase();
+        $this->setUpDatabase();
 
-        // $this->createUser();
+        $this->createUser();
     }
 
     /**
@@ -43,31 +43,37 @@ abstract class TestCase extends Orchestra
     /**
      * @param \Illuminate\Foundation\Application $app
      */
-    // protected function getEnvironmentSetUp($app)
-    // {
-    //     $app['config']->set('database.default', 'sqlite');
+    protected function getEnvironmentSetUp($app)
+    {
+        $app['config']->set('totp.ttl', 600);
 
-    //     $app['config']->set('database.connections.sqlite', [
-    //         'driver' => 'sqlite',
-    //         'database' => ':memory:',
-    //         'prefix' => '',
-    //     ]);
+        $app['config']->set('totp.size', 4);
 
-    //     $app['config']->set('app.key', 'base64:6Cu/ozj4gPtIjmXjr8EdVnGFNsdRqZfHfVjQkmTlg4Y=');
-    // }
+        $app['config']->set('totp.table', 'users');
 
-    // protected function setUpDatabase()
-    // {
-    //     include_once __DIR__.'/../database/migrations/create_users_table.php.stub';
-    //     (new \CreateUsersTable())->up();
-    // }
+        $app['config']->set('database.default', 'sqlite');
 
-    // protected function createUser()
-    // {
-    //     User::forceCreate([
-    //         'name' => 'User',
-    //         'email' => 'user@email.com',
-    //         'password' => 'test'
-    //     ]);
-    // }
+        $app['config']->set('database.connections.sqlite', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
+        ]);
+
+        $app['config']->set('app.key', 'base64:6Cu/ozj4gPtIjmXjr8EdVnGFNsdRqZfHfVjQkmTlg4Y=');
+    }
+
+    protected function setUpDatabase()
+    {
+        include_once __DIR__.'/../database/migrations/add_uri_to_users_table.php.stub';
+        (new \AddUriToUsersTable())->up();
+    }
+
+    protected function createUser()
+    {
+        User::forceCreate([
+            'name' => 'User',
+            'email' => 'user@email.com',
+            'password' => 'test'
+        ]);
+    }
 }
