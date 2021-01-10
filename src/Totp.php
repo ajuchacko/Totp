@@ -67,7 +67,9 @@ class Totp {
 
     public function refresh()
     {
-        return $this->otp = $this->generate($this->ttl, $this->digits);
+        $this->otp = $this->generate($this->ttl, $this->digits);
+
+        return $this;
     }
 
     private function generate($duration, $size)
@@ -94,5 +96,16 @@ class Totp {
     public function __toString()
     {
         return $this->otp->getProvisioningUri();
+    }
+
+    public function __call($method, $args)
+    {
+        if (method_exists($this->otp, $method)) {
+            return $this->otp->$method(...$args);
+        }
+
+        throw new \BadMethodCallException(sprintf(
+            'Call to undefined method %s::%s()', static::class, $method
+        ));
     }
 }
