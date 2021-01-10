@@ -83,4 +83,9 @@ class Totp {
 
         return $duration;
     }
+
+    public function __toString()
+    {
+        return $this->otp->getProvisioningUri();
+    }
 }
