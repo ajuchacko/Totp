@@ -40,7 +40,7 @@ class Totp {
 
     public function code()
     {
-        return $this->code;
+        return $this->at($this->otp->getEpoch());
     }
 
     public function verify($code)
@@ -66,11 +66,10 @@ class Totp {
     private function generate($period, $digits)
     {
         $totp = OTP::create(null, $period, $digest = 'sha1', $digits, $epoch = time());
-        empty(config('app.name')) ?: $totp->setIssuer(config('app.name'));
-        $totp->setLabel(Str::random(15));
 
-        $this->code = $totp->now();
-        $this->uri = $totp->getProvisioningUri();
+        empty(config('app.name')) ?: $totp->setIssuer(config('app.name'));
+
+        $totp->setLabel(Str::random(15));
 
         return $totp;
     }
