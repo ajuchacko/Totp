@@ -68,4 +68,11 @@ class TotpTest extends TestCase {
 
         $this->assertEquals(Carbon::now()->addMinutes(15)->micro(0), $otp->validUntil());
     }
+
+    public function testTryingToCreateOtpWithSizeLessThan2ThrowsException()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        Totp::make('10 minutes', 1);
+    }
 }

@@ -17,23 +17,30 @@ use Illuminate\Support\Str;
 
 class Totp {
 
-    function __construct($duration = 600, $size = 4)
+    function __construct($duration, $size)
     {
-        $this->size = $size;
+        $this->digits = $size;
 
-        $this->duration = $this->parseDuration($duration);
+        $this->ttl = $this->parseDuration($duration);
 
-        $this->otp = $this->generate($this->duration, $size);
+        $this->otp = $this->generate($this->ttl, $size);
     }
 
-    public static function make($duration = 600, $size = 4)
+    public static function make($duration = null, $size = null)
     {
+        $duration = $duration ?? config('totp.ttl');
+        $size = $size ?? config('totp.size');
+
+        if ($size < 2) {
+            throw new \InvalidArgumentException('Otp Size Can Not be smaller than 2');
+        }
+
         return new self($duration, $size);
     }
 
     public function validUntil()
     {
-        $expiryTimeStamp = $this->otp->getEpoch() + $this->duration;
+        $expiryTimeStamp = $this->otp->getEpoch() + $this->ttl;
 
         return Carbon::createFromFormat('d-m-Y H:i:s', date('d-m-Y H:i:s', $expiryTimeStamp))->micro(0);
     }
@@ -60,12 +67,12 @@ class Totp {
 
     public function refresh()
     {
-        return $this->otp = $this->generate($this->duration, $this->size);
+        return $this->otp = $this->generate($this->ttl, $this->digits);
     }
 
-    private function generate($period, $digits)
+    private function generate($duration, $size)
     {
-        $totp = OTP::create(null, $period, $digest = 'sha1', $digits, $epoch = time());
+        $totp = OTP::create(null, $duration, $digest = 'sha1', $size, $epoch = time());
 
         empty(config('app.name')) ?: $totp->setIssuer(config('app.name'));
 
