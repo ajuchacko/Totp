@@ -14,7 +14,7 @@ class AddUriToUsersTable extends Migration
         $table = config('totp.table', 'users');
 
         Schema::table($usersTable, function (Blueprint $table) {
-            $table->string('uri');
+            $table->string('uri')->nullable();
         });
     }
 
