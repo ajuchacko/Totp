@@ -29,7 +29,11 @@ trait TwoFactorAuthenticatable {
 
         $otp = Factory::loadFromProvisioningUri($this->uri);
 
-        return Totp::make($otp->getEpoch(), $otp->getDigits());
+        $totp = new Totp($otp->getEpoch(), $otp->getDigits());
+
+        $totp->otp = $otp;
+
+        return $totp;
     }
 
     private function newOtp($duration = null, $size = null)

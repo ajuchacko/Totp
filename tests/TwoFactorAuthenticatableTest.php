@@ -22,8 +22,10 @@ class TwoFactorAuthenticatableTest extends TestCase {
     {
         $user = User::first();
 
-        $totp = $user->otp();
+        $totp = $user->otp(600, 4);
 
+        $this->assertSame($totp->code(), $user->otp()->code());
+        $this->assertTrue($totp->verify(User::first()->otp()->code()));
         $this->assertSame($totp->getEpoch(), $user->otp()->getEpoch());
     }
 
